@@ -56,8 +56,10 @@ export class FsColorRepository implements IColorRepository {
     const raw = await fs.readFile('./data/answers.json', { encoding: 'utf-8' });
     const old = JSON.parse(raw) as Answer[]; // 역직렬화(deserialize)
 
+    // old 기존 답안 목록 [{ id: 2, ... }, { id: 4, ... }, { id: 5 }]
+
     const answer: Answer = {
-      id: 1,
+      id: Math.max(...old.map(item => item.id)) + 1, // 매번 새로 부여해줘야 함~
       problemID,
       detail,
       createdAt: Date.now(),
@@ -75,13 +77,30 @@ export class FsColorRepository implements IColorRepository {
   // 3.저장한 답안 삭제
 
   //삭제할 답안의 ID 받는다
-  async deleteAnswer(problemID: number) {
+  async deleteAnswer(problemID: number, answerID: number) {
+    // 복원(읽어와서 다시 js 객체로 복원)
+    const raw = await fs.readFile('./data/answers.json', { encoding: 'utf-8' });
+    const old = JSON.parse(raw) as Answer[]; // 역직렬화(deserialize)
 
-    //필터로 확인할 기존 마이페이지 답안 목록을 가져온다.??
-    const oldAnswerList =
+    // old 기존 답안 목록 [{ id: 2, ... }, { id: 4, ... }, { id: 5 }]
 
-    //마이페이지 답안 목록을 돌면서 삭제할 답안과 id다른 게시물만 남겨서 답안list로 반환
-    return oldAnswerList.filter(oldAnswerList => oldAnswerList.problemID !== problemID);
+    // 해당하는 문제에 대해서, 해당하는 answerID를 가진 것만...제외
+    // or로 살아남는 기준만 기술
+
+    const newAnswers = old.filter(answer =>
+      answer.problemID !== problemID // 너 그 문제의 답안이 아니구나? 그러면 살려줄게
+      || answer.id !== answerID // 너의 id가 answerID가 아니면 살려줄게~
+    );
+
+    //db에서는 두 인자를 다 써주는 게 좋은데 파일에서는 answer.id !== answerID만 해도 될듯
+
+    // old.filter(answer => answer.problemID !== problemID );
+    // 이러면 해당 문제에 대한 모든 답안이 사라짐
+
+
+    // 영속 persist
+    const data = JSON.stringify(newAnswers); // 직렬화 serialize
+    await fs.writeFile('./data/answers.json', data, { encoding: 'utf-8' });
   }
 
 
