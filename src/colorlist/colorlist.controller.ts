@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Inject, Param, Delete } from '@nestjs/common';
 
 @Controller('/colors')
 export class ColorListController {
@@ -6,7 +6,7 @@ export class ColorListController {
   constructor(
     @Inject('COLOR_REPOSITORY')
     private readonly colorRepository: IColorRepository,
-  ) {}
+  ) { }
 
   // https://image3.slideserve.com/7037013/http-response-message4-l.jpg
 
@@ -18,11 +18,21 @@ export class ColorListController {
     return this.colorRepository.saveAnswer(problemID, detail);
   }
   // (@Param('problemID') problemID: number  패스에 있는 :problemID를 problemID라는 매개변수로 맵핑을 해준다!
-
   @Get('/color-list')
-  async getAnswerList(): Promise<(Problem & { createdAt: number })[]> {
+  async getAnswerList(): Promise<(Pick<Answer, 'createdAt'> & Problem)[]> {
     return this.colorRepository.getAnswerList();
   }
+
+  @Delete('/problems/:problemID/answers/:answerID')
+  async deleteAnswer(@Param('problemID') problemID: number, @Param('answerID') answerID: number): Promise<void> {
+
+    return this.colorRepository.deleteAnswer(problemID, answerID)
+  }
+
+
+
+  // getAnswerList: () => Promise<(Problem & { createdAt: number })[]>;
+  // //Answer & { createdAt: number } 되어야 하는건가??
 
   // 작성한 답안을 저장한다(클라 > fs로)
 

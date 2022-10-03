@@ -16,6 +16,14 @@
         Then 링크에 해당하는 문제 페이지로 이동한다
 
 
+        ## Scenario 02: 작성한 답안을 삭제할 수 있음
+        Given 삭제할 답안의 problemID를 받아서(repo의 deleteAnswer 메소드가)
+        When 삭제 버튼을 클릭하면
+        Then 삭제되었습니다 라는 알림 뜨고 다시 답안 목록으로 이동한다? 
+                삭제한 답안이 제외된 newAnswerlist를 saveAnswer 메소드의 인자로 받아 실행한 후
+                최신 Answerlist가 반환되도록 한다
+
+
 
 ## 하고 싶은 거 (사용자 스토리)
 - 마이페이지
