@@ -55,7 +55,7 @@ type Problem = {
 
 type Answer = {
   problemID: number; // 문제의 id
-  id: number; // 답안의 id
+  id: number; // 답안의 id - 한 문제에 여러개
   createdAt: number;
   bookmark: boolean;
   detail: MyColors[];
@@ -83,6 +83,6 @@ interface IColorRepository {
 
 }
 
-interface IColorService {
+// interface IColorService {
 
-}
+// }
