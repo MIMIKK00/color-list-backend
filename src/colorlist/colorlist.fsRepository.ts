@@ -64,6 +64,11 @@ export class FsColorRepository implements IColorRepository {
       detail,
       createdAt: Date.now(),
       bookmark: false,
+
+
+
+
+
     };
 
     // 영속 persist
