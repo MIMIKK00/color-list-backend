@@ -6,9 +6,15 @@
 // 객체의 메소드와 필드는 이름으로 구분
 
 // 함수의 매개변수... 위치로 구분
+//hash 가입
+//verify 로그인
+
 
 export class FakeAuthRepository implements IAuthRepository {
     _store = []
+
+
+
 
     async getUserByEmail(email) {
         // _store에서 email을 가진 사용자를 찾아서 반환
