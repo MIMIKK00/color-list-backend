@@ -13,9 +13,6 @@
 export class FakeAuthRepository implements IAuthRepository {
     _store = []
 
-
-
-
     async getUserByEmail(email) {
         // _store에서 email을 가진 사용자를 찾아서 반환
         //배열 메서드 모르는거 점찍어서 찾아보기 + mdn 예시 참고

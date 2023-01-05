@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Inject, Param, Delete } from '@nestjs/common';
 import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
-import * as argon2 from "argon2";
+import { ConfigService } from '@nestjs/config';
+// import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 
 type LoginPayload = Pick<User, 'email' | 'password'>
@@ -13,12 +14,12 @@ type JoinPayload = Omit<User, 'id'> //omit은 pick의 반대
 
 @Controller('/auth')
 export class AuthController {
+    //constructor(private configService: ConfigService) {}
     constructor(
         @Inject('AUTH_REPOSITORY')
         private readonly authRepository: IAuthRepository,
+        private readonly configService: ConfigService
     ) { }
-
-
 
     // 로그인 >> 사용자가 아이디 비번을 준다 >> 디비에 실제로 있는 아이디 비번인지 확인을 한다 >> 
     // >> 확인이 되면, 토큰을 준다(로그인을 시켜준다) >> 받은 토큰을 가지고 홈페이지 자유이용권  
@@ -36,7 +37,7 @@ export class AuthController {
             return { success: false };
         }
 
-        if ((await argon2.verify(user.password, body.password)) === false) {
+        if (false) { //(await argon2.verify(user.password, body.password)) === false) {
             return { success: false }
             //hash는 암호화, verify는 일치 여부를 검증
         }
@@ -52,8 +53,10 @@ export class AuthController {
 
         return {
             success: true,
-            token: jwt.sign({ id: user.id, email: user.email }, this.config.jwtSecret)
+            token: jwt.sign({ id: user.id, email: user.email }, this.configService.get<string>('JWT_SECRET'))
             // .env(dot env) >> 두번째 인자인 관리자 번호는 코드레벨에서 적으면 안 돼서 env 써서 따로 관리하고 가져올 수 있음 >> 알아보기
+            // 관리자 번호를 두번쨰 인자로 받아서 토큰을 만들어줌(관리자 번호가 토큰에 들어가는 건 아님)
+
 
             // 두번째 인자: 관리자 비밀번호
             //jwt payload에 비밀번호는 들어가면 안됨 
@@ -64,14 +67,13 @@ export class AuthController {
             //token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
         }
     }
-
     //회원가입 구현: 유저모델과 연결? 바디 정확하게 파악해오기
     //유저에 대한 명세: 이메일, 비번, 가입일?
     @Post('/join')
     async join(
         @Body() body: JoinPayload
     ) {
-        const hash = await argon2.hash(body.password);
+        const hash = body.password // await argon2.hash(body.password);
         console.log({ hash })
         await this.authRepository.saveUser(body.email, hash);
     }

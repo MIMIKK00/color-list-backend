@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Inject, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Inject, Param, Delete, UseGuards } from '@nestjs/common';
+import { LoginGuard } from '../auth/auth.loginGuard';
 
 @Controller('/colors')
 export class ColorListController {
@@ -10,6 +11,10 @@ export class ColorListController {
 
   // https://image3.slideserve.com/7037013/http-response-message4-l.jpg
 
+  // login한 사람만~ 
+  // https://wikidocs.net/158631#_3
+
+  @UseGuards(LoginGuard)
   @Post('/problems/:problemID/answers') //사용자 입장에서 서버에 데이터를 보내서 저장=post
   async saveAnswer(
     @Param('problemID') problemID: number,
@@ -17,15 +22,19 @@ export class ColorListController {
   ): Promise<number> {
     return this.colorRepository.saveAnswer(problemID, detail);
   }
+
   // (@Param('problemID') problemID: number  패스에 있는 :problemID를 problemID라는 매개변수로 맵핑을 해준다!
+
+  @UseGuards(LoginGuard)
   @Get('/color-list')
   async getAnswerList(): Promise<(Pick<Answer, 'createdAt'> & Problem)[]> {
     return this.colorRepository.getAnswerList();
   }
 
+
+  //이건 로그인 가드보다 센 게 필요해서 일단 보류
   @Delete('/problems/:problemID/answers/:answerID')
   async deleteAnswer(@Param('problemID') problemID: number, @Param('answerID') answerID: number): Promise<void> {
-
     return this.colorRepository.deleteAnswer(problemID, answerID)
   }
 
