@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Inject, Param, Delete } from '@nestjs/common';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { Controller, Post, Body, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// import * as argon2 from "argon2";
+import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 
 type LoginPayload = Pick<User, 'email' | 'password'>
@@ -37,7 +36,7 @@ export class AuthController {
             return { success: false };
         }
 
-        if (false) { //(await argon2.verify(user.password, body.password)) === false) {
+        if ((await argon2.verify(user.password, body.password)) === false) {
             return { success: false }
             //hash는 암호화, verify는 일치 여부를 검증
         }
@@ -73,7 +72,7 @@ export class AuthController {
     async join(
         @Body() body: JoinPayload
     ) {
-        const hash = body.password // await argon2.hash(body.password);
+        const hash = await argon2.hash(body.password);
         console.log({ hash })
         await this.authRepository.saveUser(body.email, hash);
     }
