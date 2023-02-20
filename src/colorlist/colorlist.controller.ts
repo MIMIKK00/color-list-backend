@@ -31,14 +31,11 @@ export class ColorListController {
     return this.colorRepository.getAnswerList();
   }
 
-
   //이건 로그인 가드보다 센 게 필요해서 일단 보류
   @Delete('/problems/:problemID/answers/:answerID')
   async deleteAnswer(@Param('problemID') problemID: number, @Param('answerID') answerID: number): Promise<void> {
     return this.colorRepository.deleteAnswer(problemID, answerID)
   }
-
-
 
   // getAnswerList: () => Promise<(Problem & { createdAt: number })[]>;
   // //Answer & { createdAt: number } 되어야 하는건가??
