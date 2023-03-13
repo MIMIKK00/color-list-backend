@@ -73,7 +73,6 @@ export class AuthController {
         @Body() body: JoinPayload
     ) {
         const hash = await argon2.hash(body.password);
-        console.log({ hash })
         await this.authRepository.saveUser(body.email, hash);
     }
 }
