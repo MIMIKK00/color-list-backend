@@ -21,10 +21,20 @@ export class TypeOrmRepository implements IAuthRepository {
         // return this._repository.findOneBy({ email }); // await을 안 하면... 성능은 더 좋은데 받은 사람에게 에러가 남
     }
     async saveUser(email: string, password: string) {
+        // 이메일과 비밀번호를 받아서 디비에 저장한다
 
+        const user = this._repository.create({ email, password })
+        // 평범한 객체를 주면, 엔티티 클래스의 인스턴스로 만들어준다
+
+        //디비 저장
+        //save라는 행위를 기다린다(promise 주고 promise를 기다린다)
+        await this._repository.save(user)
+        return user.id;
     }
-    async deleteUserById(id: number) {
 
+    async deleteUserById(id: number) {
+        //id를 받아서 user객체를 디비안에서 삭제하면 될거같은데
+        await this._repository.delete({ id });
     }
 }
 

@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
-import { FakeAuthRepository } from './auth.fakeRepository';
+import { TypeOrmRepository } from './auth.typeOrmRepository';
 
 @Module({
     imports: [],
     controllers: [AuthController],
     providers: [{
         provide: 'AUTH_REPOSITORY',
-        useClass: FakeAuthRepository
+        useClass: TypeOrmRepository
     }],
 })
 export class AuthModule { }
